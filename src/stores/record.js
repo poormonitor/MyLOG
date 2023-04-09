@@ -12,6 +12,7 @@ export const useRecordStore = defineStore(
         id: item.id,
         name: item.name,
         latest: Math.max(...item.record.map((r) => r.time)),
+        last: getSumPastTime(item.id, 24 * 60 * 60),
       }));
     });
 

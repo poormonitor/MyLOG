@@ -3,7 +3,6 @@ import { useRecordStore } from "../stores/record";
 import { useRouter, useRoute } from "vue-router";
 import * as echarts from "echarts";
 import { onMounted } from "vue";
-import { tupleExpression } from "@babel/types";
 
 const message = useMessage();
 const store = useRecordStore();
@@ -179,7 +178,8 @@ onMounted(() => {
     series: [
       {
         data: store.getByDay(route.params.id),
-        type: "scatter",
+        type: "line",
+        smooth: true,
         name: "液体量",
       },
     ],
@@ -196,16 +196,14 @@ onMounted(() => {
 </script>
 
 <template>
-  <router-link
-    class="text-blue-500 hover:text-blue-600 mb-2"
-    :to="{ name: 'home' }"
-    >返回</router-link
-  >
-  <div class="text-3xl font-bold">{{ data.name }}</div>
-  <div class="mt-8 grid grid-cols-1 md:grid-cols-2">
-    <div class="h-64 w-full" id="chart1"></div>
-    <div class="h-64 w-full" id="chart2"></div>
+  <div class="mb-1">
+    <router-link
+      class="text-blue-500 hover:text-blue-600"
+      :to="{ name: 'home' }"
+      >返回</router-link
+    >
   </div>
+  <div class="text-3xl font-bold">{{ data.name }}</div>
   <div class="grid grid-cols-3 mt-6 mx-4">
     <n-statistic label="未报告的量">
       {{ store.getSumUnreported(route.params.id) }}
@@ -217,6 +215,10 @@ onMounted(() => {
       {{ Math.round(store.getAverage(route.params.id, 24 * 60 * 60)) }}
     </n-statistic>
   </div>
+  <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-y-8">
+    <div class="h-64 w-full" id="chart1"></div>
+    <div class="h-64 w-full" id="chart2"></div>
+  </div>
   <div class="mt-6 flex gap-x-4">
     <NewRecord></NewRecord>
     <n-popconfirm
@@ -225,9 +227,9 @@ onMounted(() => {
       @positive-click="reportNow"
     >
       <template #trigger>
-        <n-button>记录报告</n-button>
+        <n-button type="info">记录报告</n-button>
       </template>
-      现在记录？
+      现在记录报告？
     </n-popconfirm>
   </div>
   <n-data-table class="mt-4" :data="record" :columns="columns"> </n-data-table>

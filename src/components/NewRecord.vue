@@ -40,5 +40,5 @@ const submitCallback = () => {
       </n-form>
     </div>
   </n-modal>
-  <n-button @click="tabVisible = true">添加数据</n-button>
+  <n-button type="primary" @click="tabVisible = true">添加数据</n-button>
 </template>
