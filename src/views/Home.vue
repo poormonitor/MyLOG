@@ -42,7 +42,7 @@ console.log(store.list);
               }}
             </p>
           </div>
-          <div class="ml-10">
+          <div class="ml-2 md:ml-10">
             <p class="text-gray-700">过去24小时量</p>
             <p class="text-xl">
               {{ item.last }}

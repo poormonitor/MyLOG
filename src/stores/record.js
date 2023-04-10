@@ -30,16 +30,16 @@ export const useRecordStore = defineStore(
       data.value = data.value.filter((item) => item.id != id);
     }
 
-    function addRecord(id, record) {
+    function addRecord(id, record, time = new Date().getTime()) {
       var rid = nanoid();
-      data.value
-        .find((item) => item.id == id)
-        .record.push({
-          id: rid,
-          data: record,
-          time: new Date().getTime(),
-          report: false,
-        });
+      var item = data.value.find((item) => item.id == id);
+      item.record.push({
+        id: rid,
+        data: record,
+        time: time,
+        report: false,
+      });
+      item.record.sort((a, b) => a.time - b.time);
       return rid;
     }
 
@@ -66,6 +66,16 @@ export const useRecordStore = defineStore(
         .reduce((prev, current) => prev + current, 0);
     }
 
+    function getSumToday(id, date) {
+      let start = new Date(date).getTime();
+      let end = start + 24 * 60 * 60 * 1000;
+      return data.value
+        .find((item) => item.id == id)
+        .record.filter((item) => item.time >= start && item.time < end)
+        .map((item) => item.data)
+        .reduce((prev, current) => prev + current, 0);
+    }
+
     function getAverage(id, second) {
       let record = data.value.find((item) => item.id == id).record;
       let time = record.map((item) => item.time);
@@ -78,7 +88,7 @@ export const useRecordStore = defineStore(
     }
 
     function getDate(timestamp) {
-      return new Date(new Date(timestamp).toLocaleDateString()).getTime();
+      return new Date(new Date(timestamp).toDateString()).getTime();
     }
 
     function getByDay(id) {
@@ -92,7 +102,7 @@ export const useRecordStore = defineStore(
           (item) => item.time >= i && item.time < i + round
         );
         sums.push([
-          new Date(i).toISOString().slice(0, 10),
+          new Date(i).toLocaleDateString(),
           range.reduce((prev, current) => prev + current.data, 0),
         ]);
       }
@@ -127,6 +137,7 @@ export const useRecordStore = defineStore(
       addRecord,
       delRecord,
       getSumUnreported,
+      getSumToday,
       getSumPastTime,
       getAverage,
       getByDay,

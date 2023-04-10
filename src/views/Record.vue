@@ -124,10 +124,9 @@ if (!data) {
   router.push({ name: "home" });
 }
 
-onMounted(() => {
-  var chart1 = echarts.init(document.getElementById("chart1"));
-  var chart2 = echarts.init(document.getElementById("chart2"));
+var chart1, chart2;
 
+const printChart = () => {
   var option1 = {
     title: {
       text: "液体量散点图",
@@ -145,7 +144,19 @@ onMounted(() => {
       type: "value",
     },
     tooltip: {
-      trigger: "axis",
+      trigger: "item",
+      formatter: function (params) {
+        var text = "--";
+        if (params) {
+          let time = new Date(params.data[0]).toLocaleString();
+          text = `<p class='mb-1'>${time}</p>`;
+          text += "<div class='flex justify-between gap-x-4'>";
+          text += `<div>${params.marker}${params.seriesName}</div>`;
+          text += `<div class='font-bold'>${params.data[1]}</div>`;
+          text += "</div>";
+        }
+        return text;
+      },
     },
     series: [
       {
@@ -174,6 +185,19 @@ onMounted(() => {
     },
     tooltip: {
       trigger: "axis",
+      formatter: function (params) {
+        var text = "--";
+        if (params) {
+          params = params[0];
+          let time = new Date(params.data[0]).toLocaleDateString();
+          text = `<p class='mb-1'>${time}</p>`;
+          text += "<div class='flex justify-between gap-x-4'>";
+          text += `<div>${params.marker}${params.seriesName}</div>`;
+          text += `<div class='font-bold'>${params.data[1]}</div>`;
+          text += "</div>";
+        }
+        return text;
+      },
     },
     series: [
       {
@@ -185,8 +209,18 @@ onMounted(() => {
     ],
   };
 
+  chart1.clear();
+  chart2.clear();
+
   chart1.setOption(option1);
   chart2.setOption(option2);
+};
+
+onMounted(() => {
+  chart1 = echarts.init(document.getElementById("chart1"));
+  chart2 = echarts.init(document.getElementById("chart2"));
+
+  printChart();
 
   window.onresize = function () {
     chart1.resize();
@@ -204,12 +238,15 @@ onMounted(() => {
     >
   </div>
   <div class="text-3xl font-bold">{{ data.name }}</div>
-  <div class="grid grid-cols-3 mt-6 mx-4">
+  <div class="grid grid-cols-2 md:grid-cols-4 mt-6 mx-4">
     <n-statistic label="未报告的量">
       {{ store.getSumUnreported(route.params.id) }}
     </n-statistic>
     <n-statistic label="过去24小时的量">
       {{ store.getSumPastTime(route.params.id, 24 * 60 * 60) }}
+    </n-statistic>
+    <n-statistic label="本日的量">
+      {{ store.getSumToday(route.params.id, new Date().toDateString()) }}
     </n-statistic>
     <n-statistic label="24小时平均量">
       {{ Math.round(store.getAverage(route.params.id, 24 * 60 * 60)) }}
@@ -220,7 +257,7 @@ onMounted(() => {
     <div class="h-64 w-full" id="chart2"></div>
   </div>
   <div class="mt-6 flex gap-x-4">
-    <NewRecord></NewRecord>
+    <NewRecord @finish="printChart"></NewRecord>
     <n-popconfirm
       positive-text="确认"
       negative-text="取消"
@@ -232,5 +269,10 @@ onMounted(() => {
       现在记录报告？
     </n-popconfirm>
   </div>
-  <n-data-table class="mt-4" :data="record" :columns="columns"> </n-data-table>
+  <n-data-table
+    class="mt-4 whitespace-nowrap"
+    :data="record"
+    :columns="columns"
+  >
+  </n-data-table>
 </template>
