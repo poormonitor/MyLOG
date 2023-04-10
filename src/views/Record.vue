@@ -238,7 +238,7 @@ onMounted(() => {
     >
   </div>
   <div class="text-3xl font-bold">{{ data.name }}</div>
-  <div class="grid grid-cols-2 md:grid-cols-4 mt-6 mx-4">
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6 mx-4">
     <n-statistic label="未报告的量">
       {{ store.getSumUnreported(route.params.id) }}
     </n-statistic>

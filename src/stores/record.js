@@ -113,7 +113,7 @@ export const useRecordStore = defineStore(
       data.value
         .find((item) => item.id == id)
         .record.forEach((val) => {
-          val.report = new Date().getTime();
+          if (!val.report) val.report = new Date().getTime();
         });
     }
 

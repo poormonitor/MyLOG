@@ -32,7 +32,7 @@ console.log(store.list);
     <n-list hoverable clickable>
       <n-list-item v-for="item in store.list">
         <div class="flex items-center" @click="() => gotoRecord(item.id)">
-          <div class="m-2">
+          <div class="m-0.5 md:m-2">
             <p class="text-2xl font-bold mb-1">{{ item.name }}</p>
             <p class="text-gray-600">
               {{
@@ -42,7 +42,7 @@ console.log(store.list);
               }}
             </p>
           </div>
-          <div class="ml-2 md:ml-10">
+          <div class="ml-6 md:ml-10">
             <p class="text-gray-700">过去24小时量</p>
             <p class="text-xl">
               {{ item.last }}
