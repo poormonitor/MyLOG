@@ -22,7 +22,7 @@ console.log(store.list);
   <span class="text-3xl font-bold">液体量记录</span>
   <div class="mt-10">
     <n-result
-      class="mt-8"
+      class="mt-16"
       v-if="!store.list.length"
       status="404"
       title="没有记录"
